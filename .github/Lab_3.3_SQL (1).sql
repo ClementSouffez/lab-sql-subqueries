@@ -14,43 +14,37 @@ USE sakila;
 
 
 
--- 1-How many copies of the film Hunchbak Impopssible exist in the inventory system?
+-- 1-How many copies of the film Hunchbak Impossible exist in the inventory system?
 
-select title as film_name, count(inventory)
-
-from inventory
-join film
-using film_id
-
-where title ='Hunchbak'
-
-
-
+select count(distinct title)
+from film f
+join inventory i
+ON f.film_id= i.film_id
+where title ='Hunchback Impossible'
+  -- 1 movie
 
 
 -- 2-List all films whose length is longer than the average of all the films.
 
+SELECT length as average_length, film_id ,title
+FROM film
+WHERE length > "115.2720" 
+GROUP BY title
+ORDER BY average_length DESC;
 
-select*
-from film
-length (select avg(length
-
-
+SELECT count(film_id), avg(length) as av_length
+FROM film
+		-- "115.2720" --average of all films.
 
 -- 3--Use subqueries to display all actors who appear in the film Alone Trip.
 
-select first_name , last_name
-from actor
-join film_actor
-using(actor_id
-join film
-using film_id
-where film_id =(select film_id from film where title = 'Alone Trip'
-
-
-
-
-
+SELECT first_name , last_name 
+FROM actor a
+JOIN film_actor f
+USING (actor_id)
+JOIN film
+USING (film_id)
+WHERE film_id = (SELECT film_id FROM film WHERE title = 'Alone Trip');
 
 --  4--Sales have been lagging among young families, and you wish to target all 
 --  family movies for a promotion. Identify all movies categorized as family films.
@@ -58,13 +52,10 @@ where film_id =(select film_id from film where title = 'Alone Trip'
 select name as category,title
 from film
 join film_category
-using(film_id
+using(film_id)
 join category
-using category_id
+using (category_id)
 where category_id =(select category_id from category where name = 'Family');
-
-
-
 
 -- 5 
 select first_name, last_name, email
@@ -92,8 +83,6 @@ order by count(film_id) desc
 limit 1);
 
 
-
-
 -- 7
 select first_name, last_name, email
 from customer c
@@ -106,8 +95,6 @@ where country_id = (select country_id from country where country = 'Canada')
 );
 
 
-
-
 -- 8 
 select first_name, last_name, email
 from customer
@@ -115,5 +102,5 @@ where customer_id IN
 (select customer_id,sum(amount) as revenue
 from payment 
 group by customer_id
-having sum(amount)>
-(select avg(amount) as avg_pay
+having sum(amount) >
+(select avg(amount) FROM payment));
